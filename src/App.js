@@ -1,24 +1,25 @@
-import logo from './logo.svg';
+import { useEffect } from 'react';
 import './App.css';
+import axios from 'axios';
+import { Gallery } from './components/Gallery';
+import { useDispatch } from 'react-redux';
+import { loadItemsAction } from './store/actions';
 
-function App() {
+const App = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    axios.get('https://jsonplaceholder.typicode.com/photos')
+      .then(function (response) {
+        dispatch(loadItemsAction(response.data));
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+  }, [dispatch]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Gallery />
   );
 }
 
