@@ -6,8 +6,9 @@ import { Button, Select as MuiSelect, MenuItem } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteItemAction, sortByAlbumIdAction } from '../../store/actions';
 import { setAlbumId } from '../../utils/albumId';
+import { observer } from 'mobx-react';
 
-export const Gallery = () => {
+export const Gallery = observer(( { store }) => {
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
@@ -70,7 +71,7 @@ export const Gallery = () => {
       <Modal url={url} open={open} setOpen={setOpen} />
     </>
   );
-};
+});
 
 const List = styled.ul`
   list-style: none;

@@ -1,8 +1,10 @@
-import { makeObservable, autorun } from 'mobx';
+import { makeObservable, autorun, action, computed, observable } from 'mobx';
+import axios from 'axios';
 
 class ObservableTodoStore {
-  todos = [];
-  pendingRequests = 0;
+  items = [];
+  sortedItems = [];
+  filter ='';
 
   constructor() {
     makeObservable(this, {
@@ -10,6 +12,7 @@ class ObservableTodoStore {
       pendingRequests: observable,
       completedTodosCount: computed,
       report: computed,
+      getItems: action,
       addTodo: action,
     });
     autorun(() => console.log(this.report));
@@ -27,6 +30,16 @@ class ObservableTodoStore {
     const nextTodo = this.todos.find(todo => todo.completed === false);
     return `Next todo: "${nextTodo ? nextTodo.task : "<none>"}". ` +
       `Progress: ${this.completedTodosCount}/${this.todos.length}`;
+  }
+
+  getItems() {
+    axios.get('https://jsonplaceholder.typicode.com/photos')
+      .then(function (response) {
+        this.items = response.data;
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
   }
 
   addTodo(task) {

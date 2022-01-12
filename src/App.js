@@ -1,26 +1,17 @@
 import { useEffect } from 'react';
 import './App.css';
-import axios from 'axios';
 import { Gallery } from './components/Gallery';
-import { useDispatch } from 'react-redux';
-import { loadItemsAction } from './store/actions';
+import { observer } from 'mobx-react';
 
-const App = () => {
-  const dispatch = useDispatch();
+const App = observer(({ store }) => {
 
   useEffect(() => {
-    axios.get('https://jsonplaceholder.typicode.com/photos')
-      .then(function (response) {
-        dispatch(loadItemsAction(response.data));
-      })
-      .catch(function (error) {
-        console.log(error);
-      })
-  }, [dispatch]);
+    store.getItems()
+  }, [store]);
 
   return (
     <Gallery />
   );
-}
+});
 
 export default App;
