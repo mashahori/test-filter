@@ -5,12 +5,13 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { createStore } from 'redux'
 import { rootReducer } from './store/rootReducer';
-import { Provider } from 'react-redux';
+import { Provider } from 'mobx-react';
+import { store } from 'store/root';
 
-const store = createStore(
-  rootReducer,
-  window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__() : noop => noop,
-);
+// const store = createStore(
+//   rootReducer,
+//   window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__() : noop => noop,
+// );
 
 ReactDOM.render(
   <Provider store={store}>
