@@ -1,24 +1,22 @@
-import React from 'react';
-import { Button, Select as MuiSelect, MenuItem } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import { deleteItemAction, sortByAlbumIdAction } from '../../store/actions';
+import { Button } from '@mui/material';
+import { MouseEvent } from 'react';
 
 interface IItemProps {
   id: string;
   url: string;
   thumbnailUrl: string;
   albumId: string;
+  onDelete: (e: MouseEvent<HTMLButtonElement>) => void;
   onClick: () => void;
 }
 
 export const Item = (props: IItemProps) => {
-  const { id, url, thumbnailUrl, albumId, onClick  } = props;
-  const dispatch = useDispatch();
+  const { id, url, thumbnailUrl, albumId, onDelete, onClick } = props;
   return (
     <li key={id}>
       <span>albumId: {albumId}</span>
       <img src={thumbnailUrl} alt='some pic' data-url={url} onClick={onClick} />
-      <Button onClick={() => dispatch(deleteItemAction(id))}>Delete</Button>
+      <Button onClick={onDelete}>Delete</Button>
     </li>
   );
 };

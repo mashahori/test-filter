@@ -1,54 +1,49 @@
 import { makeObservable, autorun, action, computed, observable } from 'mobx';
 import axios from 'axios';
 
-class ObservableTodoStore {
-  items = [];
-  sortedItems = [];
-  filter ='';
+interface IItem {
+  albumId: string;
+  id: string;
+  title: string;
+  url: string;
+  thumbnailUrl: string;
+}
+
+interface IObservableTodoStore {
+  items: IItem[];
+  sortedItems: IItem[];
+  filter: string;
+  getItems: () => void;
+  setItems: (items: IItem[]) => void;
+}
+
+class ObservableTodoStore implements IObservableTodoStore {
+  items: IItem[] = [];
+  sortedItems: IItem[] = [];
+  filter: string = '';
 
   constructor() {
-    makeObservable(this, {
-      todos: observable,
-      pendingRequests: observable,
-      completedTodosCount: computed,
-      report: computed,
+    makeObservable(this as IObservableTodoStore, {
+      items: observable,
+      sortedItems: observable,
+      filter: observable,
       getItems: action,
-      addTodo: action,
+      setItems: action,
     });
-    autorun(() => console.log(this.report));
+    autorun(() => console.log(''));
   }
 
-  get completedTodosCount() {
-    return this.todos.filter(
-      todo => todo.completed === true
-    ).length;
-  }
-
-  get report() {
-    if (this.todos.length === 0)
-      return "<none>";
-    const nextTodo = this.todos.find(todo => todo.completed === false);
-    return `Next todo: "${nextTodo ? nextTodo.task : "<none>"}". ` +
-      `Progress: ${this.completedTodosCount}/${this.todos.length}`;
-  }
+  // setItems = (items: IItem[]) => {
+  //   this.items = items;
+  // }
 
   getItems() {
     axios.get('https://jsonplaceholder.typicode.com/photos')
-      .then(function (response) {
-        this.items = response.data;
-      })
+      .then((response) => (this as any).items = response.data)
       .catch(function (error) {
         console.log(error);
       })
   }
-
-  addTodo(task) {
-    this.todos.push({
-      task: task,
-      completed: false,
-      assignee: null
-    });
-  }
 }
 
-export const store = new ObservableTodoStore();
+export const store: IObservableTodoStore = new ObservableTodoStore();

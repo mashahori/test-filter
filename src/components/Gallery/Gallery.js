@@ -2,9 +2,8 @@ import { useState, useMemo } from 'react';
 import styled from 'styled-components/macro';
 import { Modal } from './Modal';
 import { Pagination } from './Pagination';
-import { Button, Select as MuiSelect, MenuItem } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import { deleteItemAction, sortByAlbumIdAction } from '../../store/actions';
+import { Item } from './Item';
+import { Select as MuiSelect, MenuItem } from '@mui/material';
 import { setAlbumId } from '../../utils/albumId';
 import { observer } from 'mobx-react';
 
@@ -14,9 +13,9 @@ export const Gallery = observer(( { store }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [rows, setRows] = useState(10);
 
-  const dispatch = useDispatch();
-  const filter = useSelector(state => state.filter);
-  const data = useSelector(state => filter ? state.sortedItems : state.items);
+  const filter = store.filter;
+  // const currentTableData = store.currentTableData
+  const data = filter ? store.sortedItems : store.items;
   const options = setAlbumId();
 
   const currentTableData = useMemo(() => {
@@ -35,7 +34,13 @@ export const Gallery = observer(( { store }) => {
 
   const handleChangeFilter = (event) => {
     setCurrentPage(1);
-    dispatch(sortByAlbumIdAction(event.target.value));
+    // dispatch(sortByAlbumIdAction(event.target.value));
+  };
+
+  const handleDelete= (event) => {
+    const target = event?.target.closest('img');
+    if (!target) return;
+    
   };
 
   return (
@@ -54,11 +59,14 @@ export const Gallery = observer(( { store }) => {
     </Select>
       <List>
         {currentTableData.map(({ id, url, thumbnailUrl, albumId }) => (
-          <li key={id}>
-            <span>albumId: {albumId}</span>
-            <img src={thumbnailUrl} alt='some pic' data-url={url} onClick={handleOpen} />
-            <Button onClick={() => dispatch(deleteItemAction(id))}>Delete</Button>
-          </li>
+          <Item 
+            id={id}
+            url={url}
+            thumbnailUrl={thumbnailUrl}
+            albumId={albumId}
+            onClick={handleOpen}
+            onDelete={handleDelete}
+          />
         ))}
       </List>
       <Pagination
