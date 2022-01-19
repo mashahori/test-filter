@@ -14,35 +14,44 @@ interface IObservableTodoStore {
   sortedItems: IItem[];
   filter: string;
   getItems: () => void;
-  setItems: (items: IItem[]) => void;
+  setFilter: (value: string) => void;
+  deleteItem: (value: string) => void;
 }
 
 class ObservableTodoStore implements IObservableTodoStore {
   items: IItem[] = [];
-  sortedItems: IItem[] = [];
   filter: string = '';
 
   constructor() {
-    makeObservable(this as IObservableTodoStore, {
+    makeObservable(this, {
       items: observable,
-      sortedItems: observable,
+      sortedItems: computed,
       filter: observable,
       getItems: action,
-      setItems: action,
+      setFilter: action,
+      deleteItem: action,
     });
     autorun(() => console.log(''));
   }
 
-  // setItems = (items: IItem[]) => {
-  //   this.items = items;
-  // }
+  setFilter = (value: string) => {
+    this.filter = value;
+  }
 
-  getItems() {
+  getItems = () => {
     axios.get('https://jsonplaceholder.typicode.com/photos')
       .then((response) => (this as any).items = response.data)
       .catch(function (error) {
         console.log(error);
       })
+  }
+
+  deleteItem = (value: string) => {
+    this.items = this.items.filter((item) => item.id !== value);
+  }
+
+  get sortedItems() {
+    return this.items.filter(el => el.albumId.toString() === this.filter)
   }
 }
 

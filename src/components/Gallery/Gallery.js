@@ -1,22 +1,23 @@
 import { useState, useMemo } from 'react';
-import styled from 'styled-components/macro';
 import { Modal } from './Modal';
 import { Pagination } from './Pagination';
 import { Item } from './Item';
-import { Select as MuiSelect, MenuItem } from '@mui/material';
+import {  MenuItem } from '@mui/material';
 import { setAlbumId } from '../../utils/albumId';
 import { observer } from 'mobx-react';
+import { store } from '../../store/root';
+import { List, Select } from './styles';
 
-export const Gallery = observer(( { store }) => {
+const options = setAlbumId();
+
+export const Gallery = observer(() => {
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [rows, setRows] = useState(10);
 
   const filter = store.filter;
-  // const currentTableData = store.currentTableData
   const data = filter ? store.sortedItems : store.items;
-  const options = setAlbumId();
 
   const currentTableData = useMemo(() => {
     const firstPageIndex = currentPage * rows;
@@ -33,14 +34,8 @@ export const Gallery = observer(( { store }) => {
   };
 
   const handleChangeFilter = (event) => {
+    store.setFilter(event.target.value);
     setCurrentPage(1);
-    // dispatch(sortByAlbumIdAction(event.target.value));
-  };
-
-  const handleDelete= (event) => {
-    const target = event?.target.closest('img');
-    if (!target) return;
-    
   };
 
   return (
@@ -59,14 +54,15 @@ export const Gallery = observer(( { store }) => {
     </Select>
       <List>
         {currentTableData.map(({ id, url, thumbnailUrl, albumId }) => (
-          <Item 
-            id={id}
-            url={url}
-            thumbnailUrl={thumbnailUrl}
-            albumId={albumId}
-            onClick={handleOpen}
-            onDelete={handleDelete}
-          />
+          <li key={id}>
+            <Item 
+              url={url}
+              thumbnailUrl={thumbnailUrl}
+              albumId={albumId}
+              onClick={handleOpen}
+              onDelete={() => store.deleteItem(id)}
+            />
+          </li>
         ))}
       </List>
       <Pagination
@@ -80,17 +76,3 @@ export const Gallery = observer(( { store }) => {
     </>
   );
 });
-
-const List = styled.ul`
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  grid-gap: 20px;
-  padding: 40px
-`;
-
-const Select = styled(MuiSelect)`
-  width: 200px;
-`;

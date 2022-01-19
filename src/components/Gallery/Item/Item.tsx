@@ -2,7 +2,6 @@ import { Button } from '@mui/material';
 import { MouseEvent } from 'react';
 
 interface IItemProps {
-  id: string;
   url: string;
   thumbnailUrl: string;
   albumId: string;
@@ -11,13 +10,13 @@ interface IItemProps {
 }
 
 export const Item = (props: IItemProps) => {
-  const { id, url, thumbnailUrl, albumId, onDelete, onClick } = props;
+  const { url, thumbnailUrl, albumId, onDelete, onClick } = props;
   return (
-    <li key={id}>
+    <>
       <span>albumId: {albumId}</span>
       <img src={thumbnailUrl} alt='some pic' data-url={url} onClick={onClick} />
       <Button onClick={onDelete}>Delete</Button>
-    </li>
+    </>
   );
 };
 
